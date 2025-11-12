@@ -1,49 +1,43 @@
 fn main() {
     let rocket = Rocket::default();
-    rocket.check_systems();
-    let launched = rocket.launch();
-    launched.navigate_to("Mars");
+    let launched = launch_rocket(&rocket);
+    println!("rocket {} in orbit", launched.name);
 }
 
+pub trait Launchable {}
 struct Grounded;
 struct Launched;
 
-struct Rocket<Stage = Grounded> {
-    pub stage: std::marker::PhantomData<Stage>,
-    pub accelleration: f32,
+impl Launchable for Grounded {}
+
+// marker trait Launchable used here
+fn launch_rocket<S>(rocket: &Rocket<S>) -> Rocket<Launched>
+where
+    S: Launchable,
+{
+    println!("Launching rocket {}", rocket.name);
+    Rocket {
+        stage: std::marker::PhantomData::<Launched>,
+        name: rocket.name.clone(),
+    }
 }
 
-impl<Stage> Rocket<Stage> {
-    pub fn check_systems(&self) {
-        println!("checking systems");
-    }
+struct Rocket<Stage = Grounded> {
+    stage: std::marker::PhantomData<Stage>,
+    name: String,
 }
 
 impl Default for Rocket {
     fn default() -> Self {
         Rocket {
             stage: std::marker::PhantomData::<Grounded>,
-            accelleration: 0.0,
+            name: "R2D2".to_string(),
         }
     }
 }
 
-impl Rocket<Grounded> {
-    pub fn launch(self) -> Rocket<Launched> {
-        let rocket = Rocket {
-            stage: std::marker::PhantomData::<Launched>,
-            accelleration: self.accelleration + 0.5,
-        };
-        println!("launching rocket, accelleration: {}", rocket.accelleration);
-        rocket
-    }
-}
-
-impl Rocket<Launched> {
-    pub fn navigate_to(&self, destination: &str) {
-        println!(
-            "rocket navigating to {} accelleration: {}",
-            destination, self.accelleration
-        );
+impl<Stage> Rocket<Stage> {
+    pub fn check_systems(&self) {
+        println!("checking systems");
     }
 }
