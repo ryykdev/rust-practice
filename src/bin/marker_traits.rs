@@ -23,23 +23,27 @@ impl Default for Rocket {
     fn default() -> Self {
         Rocket {
             stage: std::marker::PhantomData::<Grounded>,
-            accelleration: 0.1,
+            accelleration: 0.0,
         }
     }
 }
 
 impl Rocket<Grounded> {
     pub fn launch(self) -> Rocket<Launched> {
-        println!("launching rocket");
-        Rocket {
+        let rocket = Rocket {
             stage: std::marker::PhantomData::<Launched>,
             accelleration: self.accelleration + 0.5,
-        }
+        };
+        println!("launching rocket, accelleration: {}", rocket.accelleration);
+        rocket
     }
 }
 
 impl Rocket<Launched> {
     pub fn navigate_to(&self, destination: &str) {
-        println!("rocket navigating to: {}", destination);
+        println!(
+            "rocket navigating to {} accelleration: {}",
+            destination, self.accelleration
+        );
     }
 }
