@@ -30,32 +30,41 @@ fn main() {
                 fails += 1;
                 println!(">>>> fails: {fails}");
                 if fails > 10 {
-                    std::process::exit(0);
+                    break;
                 }
             }
         }
     };
-    let transmitter_clone = transmitter.clone();
-    let send_thread = std::thread::spawn({
-        move || {
-            for x in 1..=6 {
-                thread::sleep(Duration::from_millis(1000));
-                let send_result = transmitter_clone.send(x);
-                println!(">> send status: {}", send_result.is_ok());
+    let mut handles = Vec::new();
+    for thread_nr in 0..50 {
+        let transmitter_clone = transmitter.clone();
+        let send_thread = std::thread::spawn({
+            move || {
+                for x in 1..=6 {
+                    thread::sleep(Duration::from_millis(1000));
+                    let send_result = transmitter_clone.send(x);
+                    println!(">> thread {thread_nr} send status: {}", send_result.is_ok());
+                }
             }
-        }
-    });
-    let send_thread_2 = std::thread::spawn(move || {
-        for x in 100..=106 {
-            thread::sleep(Duration::from_millis(1000));
-            let send_result = transmitter.send(x);
-            println!(">> send status 2: {}", send_result.is_ok());
-        }
-    });
+        });
+        handles.push(send_thread);
+    }
 
     let receive_thread = std::thread::spawn(processor);
 
-    send_thread.join();
-    send_thread_2.join();
-    receive_thread.join();
+    loop {
+        let mut all_done = true;
+        if !receive_thread.is_finished() {
+            all_done = false;
+        }
+        for handle in &handles {
+            if !handle.is_finished() {
+                all_done = false;
+            }
+        }
+        if all_done {
+            println!("lets get out of here!");
+            break;
+        }
+    }
 }
