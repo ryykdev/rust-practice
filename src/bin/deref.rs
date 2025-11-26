@@ -4,6 +4,7 @@ fn main() {
         outside: "hi",
         inside: Inside { value: 42 },
     };
+    // Deref gives you the Wrapper.inside.value now available as wrapped.value
     println!("outside {}, inside {}", wrapped.outside, wrapped.value);
 }
 

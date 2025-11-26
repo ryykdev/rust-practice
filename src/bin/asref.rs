@@ -4,10 +4,11 @@ fn main() {
     let data = ByteData {
         meta_data: 42,
         inner_data: InnerData {
-            inner_data: "AsRef inner data".to_string(),
+            data: "AsRef inner data".to_string(),
         },
     };
     println!("outer meta data: {}", data.meta_data);
+    println!("innter data: {}", data.inner_data.data);
     // data implements AsRef<str> so it can be used as such
     process_as_string(data);
 }
@@ -18,12 +19,12 @@ pub struct ByteData {
 }
 
 pub struct InnerData {
-    inner_data: String,
+    data: String,
 }
 
 impl AsRef<str> for ByteData {
     fn as_ref(&self) -> &str {
-        &self.inner_data.inner_data
+        &self.inner_data.data
     }
 }
 
