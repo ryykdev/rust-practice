@@ -6,5 +6,6 @@ fn main() {
 
 #[must_use]
 fn must_use_result(s: &str) -> String {
+    println!("print s: {s}");
     format!("{}{}", s, " from earth")
 }
