@@ -36,10 +36,11 @@ impl Add<GroceryItem> for GroceryBill {
     }
 }
 
-impl Add<GroceryBill> for GroceryBill {
-    type Output = GroceryBill;
+// impl Add<GroceryBill> for GroceryBill {
+//     type Output = GroceryBill;
 
-    fn add(self, rhs: GroceryBill) -> Self::Output {
-        self.total +=
-    }
-}
+//     fn add(self, rhs: GroceryBill) -> Self::Output {
+//         self.total += rhs.total;
+//         self
+//     }
+// }
