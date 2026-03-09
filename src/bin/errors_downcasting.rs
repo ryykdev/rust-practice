@@ -7,7 +7,7 @@ fn main() {
     let result = server();
 
     match result {
-        Ok(t) => println!("server Ok"),
+        Ok(_t) => println!("server Ok"),
         Err(e) => {
             println!("downcasting error");
             let error = e.downcast_ref::<CopyError>().unwrap();
